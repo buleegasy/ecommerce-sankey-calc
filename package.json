@@ -11,13 +11,16 @@
   "dependencies": {
     "@nivo/core": "^0.99.0",
     "@nivo/sankey": "^0.99.0",
+    "@supabase/supabase-js": "^2.99.1",
     "@types/three": "^0.183.1",
+    "framer-motion": "^12.35.2",
     "lucide-react": "^0.577.0",
     "next": "16.1.6",
     "react": "19.2.3",
     "react-dom": "19.2.3",
     "react-globe.gl": "^2.37.0",
     "react-papaparse": "^4.4.0",
+    "recharts": "^3.8.0",
     "three": "^0.183.2"
   },
   "devDependencies": {

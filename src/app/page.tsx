@@ -2,13 +2,17 @@
 
 import { useState, useMemo } from "react";
 import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
 import CalculatorForm from "@/components/CalculatorForm";
 import SankeyChart from "@/components/SankeyChart";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import NumberTicker from "@/components/NumberTicker";
+import DiagnosticDashboard from "@/components/DiagnosticDashboard";
 import { CalculatorState } from "@/types";
 import { calculateSankeyData } from "@/lib/logic";
 import { Language, translations } from "@/lib/translations";
-import { TrendingDown, HelpCircle, Zap } from "lucide-react";
+import { TrendingDown, HelpCircle, Zap, ArrowRight, BarChart3 } from "lucide-react";
+
 export default function Home() {
   const [lang, setLang] = useState<Language>('en');
   const [state, setState] = useState<CalculatorState>({
@@ -32,108 +36,115 @@ export default function Home() {
   const profitMargin = (netProfitAmount / state.revenue) * 100;
 
   return (
-    <main className="min-h-screen bg-[#020617] text-slate-100 selection:bg-indigo-500/30">
-      <div className="max-w-7xl mx-auto px-4 py-8 lg:py-16">
+    <main className="min-h-screen text-slate-100 selection:bg-blue-500/30 overflow-x-hidden text-foregound">
+      {/* Background Mesh */}
+      <div className="bg-mesh" />
+
+      <div className="max-w-7xl mx-auto px-4 py-8 lg:py-12 relative z-10">
         {/* Navigation / Top Bar */}
-        <div className="flex justify-between items-center mb-8">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-bold uppercase tracking-wider">
-            <TrendingDown className="w-3 h-3" /> {t.alert}
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="flex justify-between items-center mb-12"
+        >
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-black uppercase tracking-[0.2em] shadow-[0_0_20px_rgba(244,63,94,0.1)]">
+            <TrendingDown className="w-3.5 h-3.5" /> {t.alert}
           </div>
           <div className="flex items-center gap-4">
             <Link 
               href="/live" 
-              className="flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-bold uppercase tracking-wider hover:bg-indigo-500/20 transition-all"
+              className="group flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/5 border border-white/10 text-white text-xs font-bold uppercase tracking-wider hover:bg-white/10 hover:border-white/20 transition-all shadow-xl backdrop-blur-md"
             >
-              <Zap className="w-3 h-3 fill-indigo-400" /> Live Dashboard
+              <Zap className="w-3.5 h-3.5 fill-amber-400 text-amber-400 group-hover:scale-110 transition-transform" /> 
+              Live Dashboard
+              <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 group-hover:translate-x-1 transition-all" />
             </Link>
             <LanguageSwitcher currentLang={lang} setLang={setLang} />
           </div>
-        </div>
+        </motion.div>
 
         {/* Header */}
-        <div className="mb-12 text-center lg:text-left">
-          <h1 className="text-4xl lg:text-6xl font-black tracking-tight mb-4 bg-gradient-to-r from-white via-slate-400 to-slate-600 bg-clip-text text-transparent">
+        <motion.div 
+          initial={{ opacity: 0, x: -20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.1 }}
+          className="mb-16 text-center lg:text-left"
+        >
+          <h1 className="text-5xl lg:text-7xl font-black tracking-tight mb-6 bg-gradient-to-r from-white via-slate-300 to-slate-500 bg-clip-text text-transparent leading-tight">
             {t.title} 
             <br />
-            <span className="text-rose-500">{t.subtitle}</span>
+            <span className="text-blue-500 drop-shadow-[0_0_30px_rgba(59,130,246,0.3)]">{t.subtitle}</span>
           </h1>
-          <p className="text-slate-400 text-lg max-w-2xl">
-            {t.description}
+          <p className="text-slate-400 text-xl max-w-2xl leading-relaxed font-medium flex items-center gap-2">
+            <BarChart3 className="w-5 h-5 text-blue-500" />
+            Business Intelligence (BI) Diagnostic Center
           </p>
-        </div>
+        </motion.div>
 
         {/* Content Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-start">
           {/* Left Column: Form */}
-          <div className="lg:col-span-4 space-y-6">
-            <h2 className="text-xl font-bold flex items-center gap-2">
-              {t.inputs}
-              <HelpCircle className="w-4 h-4 text-slate-500 cursor-help" />
-            </h2>
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.2 }}
+            className="lg:col-span-4 space-y-8"
+          >
+            <div className="flex items-center justify-between">
+              <h2 className="text-2xl font-black tracking-tight flex items-center gap-3">
+                {t.inputs}
+                <HelpCircle className="w-5 h-5 text-slate-500 cursor-help hover:text-indigo-400 transition-colors" />
+              </h2>
+            </div>
+            
             <CalculatorForm state={state} setState={setState} lang={lang} />
             
-            {/* Quick Summary Card */}
-            <div className="p-6 rounded-2xl bg-gradient-to-br from-indigo-500/10 to-purple-500/10 border border-indigo-500/20">
-              <div className="text-sm font-medium text-slate-400 mb-1">{t.estimatedProfit}</div>
-              <div className="text-3xl font-black text-emerald-400 mb-2">
-                ${netProfitAmount.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            <motion.div 
+              layout
+              className="p-8 glass glass-hover relative overflow-hidden group"
+            >
+              <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-20 transition-opacity">
+                <TrendingDown className="w-24 h-24 text-emerald-400 rotate-12" />
               </div>
-              <div className="flex items-center gap-2">
-                <div className="h-2 flex-1 bg-slate-800 rounded-full overflow-hidden">
-                  <div 
-                    className="h-full bg-emerald-500 transition-all duration-500" 
-                    style={{ width: `${Math.max(0, Math.min(100, profitMargin))}%` }} 
+              
+              <div className="relative z-10">
+                <div className="text-sm font-bold text-indigo-300/80 uppercase tracking-widest mb-2">{t.estimatedProfit}</div>
+                <div className="text-5xl font-black text-emerald-400 mb-6 flex items-baseline gap-1">
+                  <span className="text-3xl font-bold opacity-80">$</span>
+                  <NumberTicker 
+                    value={netProfitAmount} 
+                    decimals={2}
+                    className="tabular-nums"
                   />
                 </div>
-                <span className="text-xs font-bold text-slate-500">{profitMargin.toFixed(1)}% {t.margin}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Right Column: Visualization */}
-          <div className="lg:col-span-8">
-            <div className="sticky top-8">
-              <div className="mb-4 flex items-center justify-between">
-                <h2 className="text-xl font-bold">{t.visualization}</h2>
-                <div className="flex gap-2">
-                  <span className="flex items-center gap-1.5 text-xs text-slate-400">
-                    <span className="w-2 h-2 rounded-full bg-indigo-500" /> {t.revenue}
-                  </span>
-                  <span className="flex items-center gap-1.5 text-xs text-slate-400">
-                    <span className="w-2 h-2 rounded-full bg-emerald-500" /> {t.estimatedProfit}
-                  </span>
-                  <span className="flex items-center gap-1.5 text-xs text-slate-400">
-                    <span className="w-2 h-2 rounded-full bg-rose-500" /> {t.alert}
-                  </span>
+                
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between text-xs font-bold uppercase tracking-wider text-slate-400">
+                    <span>{t.margin}</span>
+                    <span className="text-emerald-400">{profitMargin.toFixed(1)}%</span>
+                  </div>
+                  <div className="h-3 w-full bg-slate-900/50 rounded-full overflow-hidden border border-white/5">
+                    <motion.div 
+                      initial={{ width: 0 }}
+                      animate={{ width: `${Math.max(0, Math.min(100, profitMargin))}%` }}
+                      transition={{ type: "spring", damping: 20 }}
+                      className="h-full bg-gradient-to-r from-emerald-500 to-teal-400 shadow-[0_0_15px_rgba(16,185,129,0.5)]" 
+                    />
+                  </div>
                 </div>
               </div>
-              <SankeyChart data={sankeyData} />
-              
-              <div className="mt-8 p-6 rounded-2xl bg-white/5 border border-white/10 backdrop-blur-sm">
-                <h3 className="text-lg font-bold mb-4">{t.keyInsights}</h3>
-                <ul className="space-y-3 text-sm text-slate-400">
-                  <li className="flex gap-2">
-                    <span className="text-indigo-400 font-bold">•</span>
-                    {t.insightGross} <span className="text-slate-200">
-                      {((state.revenue - (state.revenue * (state.cogsPercent / 100)) - (state.revenue * (state.shippingPercent / 100))) / state.revenue * 100).toFixed(1)}%
-                    </span>.
-                  </li>
-                  {state.isShopifyBasic && state.useStripe && (
-                    <li className="flex gap-2">
-                      <span className="text-rose-400 font-bold">•</span>
-                      <span>{t.insightShopify}</span>
-                    </li>
-                  )}
-                  <li className="flex gap-2">
-                    <span className="text-amber-400 font-bold">•</span>
-                    {t.insightIntl} <span className="text-slate-200">
-                      ${(state.revenue * (state.intlOrderPercent / 100) * 0.025).toLocaleString()}
-                    </span> {t.ofTotalCosts}
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
+
+          {/* Right Column: BI Analytical Center */}
+          <motion.div 
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.3 }}
+            className="lg:col-span-8"
+          >
+            <DiagnosticDashboard state={state} />
+          </motion.div>
         </div>
       </div>
     </main>

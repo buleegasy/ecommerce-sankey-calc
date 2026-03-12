@@ -29,12 +29,12 @@ export const calculateSankeyData = (state: CalculatorState, lang: Language): San
   const netProfit = revenue - cogs - shipping - totalStripeFees - shopifyPenaltyFee;
 
   const nodes = [
-    { id: t.totalRevenueNode, nodeColor: "#6366f1" },
-    { id: t.cogsNode, nodeColor: "#94a3b8" },
-    { id: t.shippingNode, nodeColor: "#64748b" },
-    { id: t.stripeNode, nodeColor: "#ef4444" },
-    { id: t.shopifyNode, nodeColor: "#f43f5e" },
-    { id: t.profitNode, nodeColor: "#22c55e" },
+    { id: t.totalRevenueNode, nodeColor: "#3b82f6" },
+    { id: t.cogsNode, nodeColor: "#64748b" },
+    { id: t.shippingNode, nodeColor: "#475569" },
+    { id: t.stripeNode, nodeColor: "#8b5cf6" },
+    { id: t.shopifyNode, nodeColor: "#ec4899" },
+    { id: t.profitNode, nodeColor: "#10b981" },
   ];
 
   const links = [

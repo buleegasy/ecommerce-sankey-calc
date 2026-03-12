@@ -43,6 +43,14 @@ interface Order {
   size: number;
 }
 
+import { createClient } from '@supabase/supabase-js';
+
+// Initialize with public Anonymous Key (safely hardcoded or from envs for real deployment)
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://placeholder.supabase.co',
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY || 'placeholder'
+);
+
 export default function LiveDashboard() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [totalRevenue, setTotalRevenue] = useState(12450); // Starting mock revenue
@@ -60,35 +68,45 @@ export default function LiveDashboard() {
   };
 
   useEffect(() => {
-    const generateOrder = () => {
-      const city = CITIES[Math.floor(Math.random() * CITIES.length)];
-      const amount = Math.floor(Math.random() * 180) + 20;
-      const newOrder: Order = {
-        id: Math.random().toString(36).substr(2, 9),
-        ...city,
-        city: city.name, // Explicitly map city.name to city
-        amount,
-        color: '#f43f5e',
-        size: 0.5 + Math.random() * 0.5
-      };
+    // Subscribe to Supabase Postgres Changes
+    const channel = supabase
+      .channel('live-orders-channel')
+      .on(
+        'postgres_changes',
+        {
+          event: 'INSERT',
+          schema: 'public',
+          table: 'live_orders',
+        },
+        (payload: any) => {
+          const newOrderData = payload.new;
 
-      setOrders(prev => [...prev.slice(-40), newOrder]); // Keep last 40 for performance
-      setTotalRevenue(prev => prev + amount);
-      setLatestOrder(newOrder);
-      playSound();
+          const transformedOrder: Order = {
+            id: newOrderData.id || Math.random().toString(36).substr(2, 9),
+            city: newOrderData.city,
+            country: newOrderData.country,
+            lat: newOrderData.lat,
+            lng: newOrderData.lng,
+            amount: newOrderData.amount, 
+            color: '#f43f5e',
+            size: 0.5 + Math.random() * 0.5
+          };
 
-      // Reset latest order toast after 4 seconds
-      setTimeout(() => {
-        setLatestOrder(current => current?.id === newOrder.id ? null : current);
-      }, 4000);
+          setOrders(prev => [...prev.slice(-15), transformedOrder]);
+          setTotalRevenue(prev => prev + Number(newOrderData.amount));
+          setLatestOrder(transformedOrder);
+          playSound();
 
-      // Schedule next order
-      const nextDelay = Math.random() * 4000 + 2000;
-      setTimeout(generateOrder, nextDelay);
+          setTimeout(() => {
+            setLatestOrder(current => current?.id === transformedOrder.id ? null : current);
+          }, 4000);
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
     };
-
-    const timer = setTimeout(generateOrder, 2000);
-    return () => clearTimeout(timer);
   }, []);
 
   return (
