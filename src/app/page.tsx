@@ -1,14 +1,14 @@
 "use client";
 
 import { useState, useMemo } from "react";
+import Link from "next/link";
 import CalculatorForm from "@/components/CalculatorForm";
 import SankeyChart from "@/components/SankeyChart";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { CalculatorState } from "@/types";
 import { calculateSankeyData } from "@/lib/logic";
 import { Language, translations } from "@/lib/translations";
-import { TrendingDown, HelpCircle } from "lucide-react";
-
+import { TrendingDown, HelpCircle, Zap } from "lucide-react";
 export default function Home() {
   const [lang, setLang] = useState<Language>('en');
   const [state, setState] = useState<CalculatorState>({
@@ -39,7 +39,15 @@ export default function Home() {
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-400 text-xs font-bold uppercase tracking-wider">
             <TrendingDown className="w-3 h-3" /> {t.alert}
           </div>
-          <LanguageSwitcher currentLang={lang} setLang={setLang} />
+          <div className="flex items-center gap-4">
+            <Link 
+              href="/live" 
+              className="flex items-center gap-2 px-4 py-2 rounded-full bg-indigo-500/10 border border-indigo-500/20 text-indigo-400 text-xs font-bold uppercase tracking-wider hover:bg-indigo-500/20 transition-all"
+            >
+              <Zap className="w-3 h-3 fill-indigo-400" /> Live Dashboard
+            </Link>
+            <LanguageSwitcher currentLang={lang} setLang={setLang} />
+          </div>
         </div>
 
         {/* Header */}
